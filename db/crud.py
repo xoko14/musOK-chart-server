@@ -25,3 +25,6 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def get_song(db: Session, song_id: int):
     return db.query(models.Song).filter(models.Song.id == song_id).first()
+
+def create_song(db: Session, user: schemas.SongCreate):
+    

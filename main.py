@@ -41,29 +41,35 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-# TODO: Placeholder, needs to connect to db and fetch id
 
 @app.get("/songs/{song_id}", response_model=schemas.Song)
 def get_song(song_id: str, db: Session = Depends(get_db)):
     return crud.get_song(db, song_id=song_id)
 
+@app.post("/songs/", response_model=schemas.Song)
+def create_song(song: schemas.Song, db: Session = Depends(get_db)):
+    db_song = 
+
+
+# TODO: Placeholder, needs to connect to db and fetch id
+
 @app.get("/songs/{song_id}/jacket")
-def get_song(song_id: str):
+def get_song_jacket(song_id: str):
     # return RedirectResponse(f"http://localhost/files/songs/{song_id}/jacket.png")
     return FileResponse(f"C:/xampp/htdocs/files/songs/{song_id}/jacket.png")
 
 @app.get("/songs/{song_id}/audio")
-def get_song(song_id: str):
+def get_song_audio(song_id: str):
     return FileResponse(f"C:/xampp/htdocs/files/songs/{song_id}/song.wav")
 
 @app.get("/songs/{song_id}/easy")
-def get_song(song_id: str):
-    return FileResponse(f"C:/xampp/htdocs/files/songs/{song_id}/song_h.chart")
+def get_song_easy(song_id: str):
+    return FileResponse(f"C:/xampp/htdocs/files/songs/{song_id}/song_e.chart")
 
 @app.get("/songs/{song_id}/normal")
-def get_song(song_id: str):
+def get_song_normal(song_id: str):
     return FileResponse(f"C:/xampp/htdocs/files/songs/{song_id}/song_n.chart")
 
 @app.get("/songs/{song_id}/hard")
-def get_song(song_id: str):
+def get_song_hard(song_id: str):
     return FileResponse(f"C:/xampp/htdocs/files/songs/{song_id}/song_h.chart")

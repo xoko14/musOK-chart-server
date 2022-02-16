@@ -2,8 +2,12 @@ from pydantic import BaseModel
 
 
 class SongBase(BaseModel):
-    id: str
     song_name: str
+    author: str
+    music: str
+    easy_diff: tuple
+    normal_diff: tuple
+    hard_diff: tuple
 
 
 class SongCreate(SongBase):
@@ -11,11 +15,7 @@ class SongCreate(SongBase):
 
 
 class Song(SongBase):
-    author: str
-    music: str
-    easy_diff: tuple
-    normal_diff: tuple
-    hard_diff: tuple
+    id: str
     
     class Config:
         orm_mode = True
