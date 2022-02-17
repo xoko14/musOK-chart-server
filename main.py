@@ -48,8 +48,7 @@ def get_song(song_id: str, db: Session = Depends(get_db)):
 
 @app.post("/songs/", response_model=schemas.Song)
 def create_song(song: schemas.Song, db: Session = Depends(get_db)):
-    db_song = 
-
+    return crud.create_song(db=db, song=song)
 
 # TODO: Placeholder, needs to connect to db and fetch id
 

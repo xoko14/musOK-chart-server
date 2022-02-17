@@ -8,6 +8,7 @@ class SongBase(BaseModel):
     easy_diff: tuple
     normal_diff: tuple
     hard_diff: tuple
+    song_art:tuple
 
 
 class SongCreate(SongBase):
