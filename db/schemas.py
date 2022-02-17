@@ -41,18 +41,6 @@ class SongBase(BaseModel):
 class SongCreate(SongBase):
     pass
 
-class Difficulty(BaseModel):
-    text: str
-    charter: str
-
-    class Config:
-        orm_mode = True
-
-class SongArt(BaseModel):
-    artist: str
-
-    class Config:
-        orm_mode = True
 
 @as_form
 class SongCreateAPI(BaseModel):

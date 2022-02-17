@@ -1,5 +1,5 @@
-from fastapi import Depends, FastAPI, Form, HTTPException, UploadFile
-from fastapi.responses import RedirectResponse, FileResponse
+from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from db import crud, models, schemas
@@ -110,8 +110,6 @@ def get_song(song_id: str, db: Session = Depends(get_db)):
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return db_song
-
-# TODO: Placeholder, needs to connect to db and fetch id
 
 @app.get("/songs/{song_id}/jacket")
 def get_song_jacket(song_id: str, db: Session = Depends(get_db)):
