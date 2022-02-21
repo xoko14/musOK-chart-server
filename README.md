@@ -1,6 +1,7 @@
 # musOK-chart-server
 Server for uploading and downloading charts.
-Uses PostgreSQL.
+
+Needs a PostgreSQL database.
 
 ## Installation
 
