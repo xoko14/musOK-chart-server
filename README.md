@@ -22,7 +22,7 @@ Install uvicorn:
 sudo apt-get install uvicorn
 ```
 
-Create and cnfigure `.env` file:
+Create and configure `.env` file:
 ```
 DB_USER=<db user>
 DB_PASSWORD=<password>
