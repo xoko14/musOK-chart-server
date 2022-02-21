@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse
@@ -50,9 +50,9 @@ def create_song(
     audio: UploadFile,
     art: UploadFile,
     song: schemas.SongCreateAPI = Depends(schemas.SongCreateAPI.as_form),
-    easy: UploadFile | None = None,
-    normal: UploadFile | None = None,
-    hard: UploadFile | None = None,
+    easy: Optional[UploadFile] = None,
+    normal: Optional[UploadFile] = None,
+    hard: Optional[UploadFile] = None,
     db: Session = Depends(get_db)
     ):
 

@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 
+from typing import Optional
+
 from . import models, schemas
 
 
@@ -26,7 +28,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_song(db: Session, song_id: int):
     return db.query(models.Song).filter(models.Song.id == song_id).first()
 
-def create_song(db: Session, song: schemas.SongCreateAPI, audio: str, art: str, easy: str | None = None, normal: str | None = None, hard: str | None = None):
+def create_song(db: Session, song: schemas.SongCreateAPI, audio: str, art: str, easy: Optional[str] = None, normal: Optional[str]= None, hard: Optional[str] = None):
     db_song = models.Song(
         song_name=song.song_name,
         author=song.author,
