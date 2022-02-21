@@ -11,6 +11,11 @@ Install requirements:
 pip install -r requirements.txt
 ```
 
+Install psycopg2
+```
+sudo apt-get install python-psycopg2
+```
+
 Install uvicorn:
 ```
 sudo apt-get install uvicorn
