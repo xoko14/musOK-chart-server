@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, UploadFile
@@ -8,6 +9,10 @@ from db import crud, models, schemas
 from db.database import SessionLocal, engine
 
 import uuid
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -22,6 +27,15 @@ def get_db():
     finally:
         db.close()
 
+
+@app.get("/info", response_model=schemas.StoreInfo)
+def get_info(db: Session = Depends(get_db)):
+    info = schemas.StoreInfo(
+        name=os.environ.get("STORE_NAME"),
+        description=os.environ.get("STORE_DESCRIPTION"),
+        total_songs=crud.get_total_songs(db)
+        )
+    return info
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -45,7 +59,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/songs", response_model=schemas.Song)
+@app.post("/songs/", response_model=schemas.Song)
 def create_song(
     audio: UploadFile,
     art: UploadFile,
@@ -104,7 +118,10 @@ def create_song(
 
     return crud.create_song(db, song, file_audio, file_art, file_easy, file_normal, file_hard)
     
-
+@app.get("/songs/", response_model=List[schemas.Song])
+def read_songs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    songs = crud.get_songs(db, skip=skip, limit=limit)
+    return songs
 
 @app.get("/songs/{song_id}", response_model=schemas.Song)
 def get_song(song_id: str, db: Session = Depends(get_db)):

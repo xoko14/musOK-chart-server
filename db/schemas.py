@@ -80,3 +80,13 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+class Store(BaseModel):
+    name: str
+    description: str
+
+class StoreInfo(Store):
+    total_songs: int
+
+    class Config:
+        orm_mode = True

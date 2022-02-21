@@ -28,6 +28,9 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_song(db: Session, song_id: int):
     return db.query(models.Song).filter(models.Song.id == song_id).first()
 
+def get_songs(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Song).offset(skip).limit(limit).all()
+
 def create_song(db: Session, song: schemas.SongCreateAPI, audio: str, art: str, easy: Optional[str] = None, normal: Optional[str]= None, hard: Optional[str] = None):
     db_song = models.Song(
         song_name=song.song_name,
@@ -54,3 +57,7 @@ def create_song(db: Session, song: schemas.SongCreateAPI, audio: str, art: str, 
     db.commit()
     db.refresh(db_song)
     return db_song
+
+def get_total_songs(db: Session):
+    result = db.execute("select count(id) from songs")
+    return result.first()[0]
