@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Optional, Type, List
 from fastapi import Form
 from pydantic import BaseModel
 import inspect
@@ -76,7 +76,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    songs_uploaded: list[Song] = []
+    songs_uploaded: List[Song] = []
 
     class Config:
         orm_mode = True
