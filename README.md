@@ -31,5 +31,5 @@ DB_NAME=<db name>
 
 Finally, run:
 ```
-uvicorn main:app --reload --host <db ip>
+uvicorn main:app --host <db ip>
 ```
