@@ -12,6 +12,8 @@ import uuid
 
 from dotenv import load_dotenv
 
+from xml.etree import ElementTree as ET
+
 load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
@@ -58,22 +60,41 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-
 @app.post("/songs/", response_model=schemas.Song)
 def create_song(
     audio: UploadFile,
     art: UploadFile,
-    song: schemas.SongCreateAPI = Depends(schemas.SongCreateAPI.as_form),
+    song_info: UploadFile,
     easy: Optional[UploadFile] = None,
     normal: Optional[UploadFile] = None,
     hard: Optional[UploadFile] = None,
     db: Session = Depends(get_db)
     ):
-
     if audio.content_type != "audio/wav":
         raise HTTPException(status_code=415, detail="Media type must be audio/wav")
     if art.content_type != "image/png":
         raise HTTPException(status_code=415, detail="Media type must be image/png")
+    if song_info.content_type != "text/xml":
+        raise HTTPException(status_code=415, detail="Media type must be text/xml")
+
+    xml = song_info.file.read()
+    root: ET.Element = ET.fromstring(xml)
+
+    try:
+        song = schemas.SongCreateAPI(
+            song_name=root.findtext("title"),
+            author=root.findtext("artist"),
+            easy_diff_text=root.find("easy").attrib["difficulty"],
+            easy_diff_charter=root.find("easy").attrib["charter"],
+            normal_diff_text=root.find("normal").attrib["difficulty"],
+            normal_diff_charter=root.find("normal").attrib["charter"],
+            hard_diff_text=root.find("hard").attrib["difficulty"],
+            hard_diff_charter=root.find("hard").attrib["charter"],
+            song_art_artist=root.find("jacket").attrib["artist"]
+        )
+    except:
+        raise HTTPException(415, "Song info XML not formed correctly")
+
 
     file_audio = f"{uuid.uuid4().hex}.wav"
     f = open(f"./storage/audio/{file_audio}", "wb")
@@ -113,8 +134,6 @@ def create_song(
         hard.close()
     else:
         file_hard = None
-
-    
 
     return crud.create_song(db, song, file_audio, file_art, file_easy, file_normal, file_hard)
     
