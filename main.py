@@ -32,7 +32,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title="API for "+os.environ.get("STORE_NAME"),
+    description=os.environ.get("STORE_DESCRIPTION"),
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
