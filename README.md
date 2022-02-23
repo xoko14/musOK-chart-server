@@ -35,7 +35,7 @@ STORE_NAME="Your store name"
 STORE_DESCRIPTION="Your store description"
 
 # Security
-SECRET_KEY = <generate your key with 'openssl rand -hex 32', for example>
+SECRET_KEY = <you can generate your key with 'openssl rand -hex 32'>
 ALGORITHM = <encoding algorithm for jwt, for example "HS256">
 ACCESS_TOKEN_EXPIRE_MINUTES = <how long should any auth token be valid in minutes>
 ```
