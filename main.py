@@ -144,7 +144,8 @@ def create_song(
     easy: Optional[UploadFile] = None,
     normal: Optional[UploadFile] = None,
     hard: Optional[UploadFile] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_current_user)
     ):
 
     if audio.content_type != "audio/wav":
@@ -167,7 +168,8 @@ def create_song(
             normal_diff_charter=root.find("normal").attrib["charter"],
             hard_diff_text=root.find("hard").attrib["difficulty"],
             hard_diff_charter=root.find("hard").attrib["charter"],
-            song_art_artist=root.find("jacket").attrib["artist"]
+            song_art_artist=root.find("jacket").attrib["artist"],
+            uploader=current_user.id
         )
     except:
         raise HTTPException(415, "Song info XML not formed correctly")
