@@ -36,6 +36,7 @@ class SongBase(BaseModel):
     normal_diff: tuple
     hard_diff: tuple
     song_art:tuple
+    uploader: int
 
 
 class SongCreate(SongBase):
@@ -53,6 +54,7 @@ class SongCreateAPI(BaseModel):
     hard_diff_text: Optional[str]
     hard_diff_charter: Optional[str]
     song_art_artist: str
+    uploader: str
 
     class Config:
         orm_mode = True
@@ -90,3 +92,10 @@ class StoreInfo(Store):
 
     class Config:
         orm_mode = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None

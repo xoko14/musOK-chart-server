@@ -6,3 +6,5 @@ httptools==0.1.*
 uvloop>=0.14.0
 python-dotenv
 python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
