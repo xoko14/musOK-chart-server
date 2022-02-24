@@ -59,3 +59,8 @@ class Song(Base):
     music = Column(String)
     uploader = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="songs_uploaded")
+
+    association_table = Table('association', Base.metadata,
+    Column('left_id', ForeignKey('left.id'), primary_key=True),
+    Column('right_id', ForeignKey('right.id'), primary_key=True)
+)

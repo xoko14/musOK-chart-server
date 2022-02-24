@@ -31,3 +31,12 @@ create table songs
     uploader    integer,
     constraint  fk_user foreign key(uploader) references users(id)
 );
+
+create table favs
+(
+    user_id integer,
+    song_id integer,
+    constraint pk_favs primary key (user_id, song_id),
+    constraint fk_user_fav foreign key(user_id) references users(id),
+    constraint fk_song_fav foreign key(song_id) references songs(id)
+)
