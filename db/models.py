@@ -10,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     username = Column(String, unique=True)
     hashed_password = Column("pass", String)
-    songs = relationship("Song")
+    songs_uploaded = relationship("Song", back_populates="user")
 
 class Song(Base):
     __tablename__ = "songs"
@@ -57,6 +57,5 @@ class Song(Base):
         )
     )
     music = Column(String)
-
     uploader = Column(Integer, ForeignKey("users.id"))
-    #parent = relationship("User", back_populates="songs")
+    user = relationship("User", back_populates="songs_uploaded")
