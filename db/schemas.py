@@ -62,7 +62,7 @@ class SongCreateAPI(BaseModel):
 
 
 class Song(SongBase):
-    id: str
+    id: int
     
     class Config:
         orm_mode = True
