@@ -1,9 +1,14 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, true
+from sqlalchemy import Column, ForeignKey, Integer, String, true, Table
 from sqlalchemy_utils import CompositeType
 from sqlalchemy.orm import relationship
 
 from .database import Base
 
+
+association_table = Table('favs', Base.metadata,
+    Column('user_id', ForeignKey('users.id'), primary_key=True),
+    Column('song_id', ForeignKey('songs.id'), primary_key=True)
+    )
 
 class User(Base):
     __tablename__ = "users"
@@ -11,6 +16,7 @@ class User(Base):
     username = Column(String, unique=True)
     hashed_password = Column("pass", String)
     songs_uploaded = relationship("Song", back_populates="user")
+    songs_faved = relationship("Song", secondary=association_table)
 
 class Song(Base):
     __tablename__ = "songs"
@@ -59,8 +65,3 @@ class Song(Base):
     music = Column(String)
     uploader = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="songs_uploaded")
-
-    association_table = Table('association', Base.metadata,
-    Column('left_id', ForeignKey('left.id'), primary_key=True),
-    Column('right_id', ForeignKey('right.id'), primary_key=True)
-)

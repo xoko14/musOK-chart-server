@@ -82,6 +82,12 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+        
+class UserFavs(UserBase):
+    songs_faved: List[Song] = []
+    
+    class Config:
+        orm_mode = True
 
 class Store(BaseModel):
     name: str
