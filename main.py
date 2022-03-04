@@ -130,6 +130,10 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
 
+@app.get("/users/me/favs", response_model=List[schemas.Song])
+def read_user(current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return current_user.songs_faved
+
 @app.get("/users/{user_id}", response_model=schemas.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
