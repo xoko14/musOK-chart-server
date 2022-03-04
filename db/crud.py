@@ -62,3 +62,8 @@ def create_song(db: Session, song: schemas.SongCreateAPI, audio: str, art: str, 
 def get_total_songs(db: Session):
     result = db.execute("select count(id) from songs")
     return result.first()[0]
+
+def fav_song(db: Session, user_id: int, song_id: int):
+    db_user: models.User = get_user(db, user_id)
+    db_user.songs_faved.append(get_song(db, song_id))
+    db.commit()

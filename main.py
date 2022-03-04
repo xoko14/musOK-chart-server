@@ -271,3 +271,10 @@ def get_song_hard(song_id: str, db: Session = Depends(get_db)):
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/charts/{db_song.hard_diff[1]}")
+
+@app.put("/songs/{song_id}/fav")
+def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    db_song = crud.get_song(db=db, song_id=song_id)
+    if db_song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    crud.fav_song(db, current_user.id, song_id)
