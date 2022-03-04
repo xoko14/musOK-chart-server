@@ -64,6 +64,19 @@ def get_total_songs(db: Session):
     return result.first()[0]
 
 def fav_song(db: Session, user_id: int, song_id: int):
+    try:
+        db_user: models.User = get_user(db, user_id)
+        db_user.songs_faved.append(get_song(db, song_id))
+        db.commit()
+    except:
+        return False
+    return True
+    
+def unfav_song(db: Session, user_id: int, song_id: int):
     db_user: models.User = get_user(db, user_id)
-    db_user.songs_faved.append(get_song(db, song_id))
-    db.commit()
+    try:
+        db_user.songs_faved.remove(get_song(db, song_id))
+        db.commit()
+    except:
+        return False
+    return True

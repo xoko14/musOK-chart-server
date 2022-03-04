@@ -137,12 +137,12 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-@app.get("/users/{user_id}/favs", response_model=schemas.UserFavs)
+@app.get("/users/{user_id}/favs", response_model=List[schemas.Song])
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+    return db_user.songs_faved
 
 @app.post("/songs/", response_model=schemas.Song)
 def create_song(
@@ -277,4 +277,11 @@ def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
-    crud.fav_song(db, current_user.id, song_id)
+    return crud.fav_song(db, current_user.id, song_id)
+    
+@app.put("/songs/{song_id}/unfav")
+def unfav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    db_song = crud.get_song(db=db, song_id=song_id)
+    if db_song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    return crud.unfav_song(db, current_user.id, song_id)
