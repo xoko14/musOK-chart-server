@@ -112,9 +112,12 @@ class FavStatus(str, Enum):
     UNFAVED = "unfaved"
     FAV_ERROR = "error"
 
+    class Config:
+        orm_mode = True
+
 class SongStatus(BaseModel):
     song: Song
-    faved: FavStatus
+    status: FavStatus
 
     class Config:
         orm_mode = True
