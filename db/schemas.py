@@ -1,6 +1,7 @@
 from typing import Optional, Type, List
 from fastapi import Form
 from pydantic import BaseModel
+from enum import Enum
 import inspect
 
 
@@ -105,3 +106,15 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class FavStatus(Enum):
+    FAVED = 1
+    UNFAVED = 2
+    FAV_ERROR = -1
+
+class SongStatus(BaseModel):
+    song: Song
+    faved: FavStatus
+
+    class Config:
+        orm_mode = True

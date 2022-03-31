@@ -281,11 +281,31 @@ def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
-    return crud.fav_song(db, current_user.id, song_id)
+    if crud.fav_song(db, current_user.id, song_id):
+        fav_status = schemas.SongStatus(
+            song = db_song,
+            status = schemas.FavStatus.FAVED
+        )
+    else:
+       fav_status = schemas.SongStatus(
+            song = db_song,
+            faved = schemas.FavStatus.FAV_ERROR
+        ) 
+    return fav_status
     
 @app.put("/songs/{song_id}/unfav")
 def unfav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
-    return crud.unfav_song(db, current_user.id, song_id)
+    if crud.unfav_song(db, current_user.id, song_id):
+        fav_status = schemas.SongStatus(
+            song = db_song,
+            status = schemas.FavStatus.UNFAVED
+        )
+    else:
+       fav_status = schemas.SongStatus(
+            song = db_song,
+            faved = schemas.FavStatus.FAV_ERROR
+        ) 
+    return fav_status
