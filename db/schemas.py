@@ -107,10 +107,10 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
-class FavStatus(Enum):
-    FAVED = 1
-    UNFAVED = 2
-    FAV_ERROR = -1
+class FavStatus(str, Enum):
+    FAVED = "faved"
+    UNFAVED = "unfaved"
+    FAV_ERROR = "error"
 
 class SongStatus(BaseModel):
     song: Song
