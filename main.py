@@ -147,8 +147,8 @@ async def read_current_user(current_user: schemas.User = Depends(get_current_use
     return current_user
 
 @app.get("/users/me/favs", response_model=List[schemas.Song], tags=["users"])
-def read_current_user_favs(current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
-    return current_user.songs_faved
+def read_current_user_favs(skip: int = 0, limit: int = 100, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return current_user.songs_faved[skip:(limit + skip if limit is not None else None)]
 
 @app.get("/users/{user_id}", response_model=schemas.User, tags=["users"])
 def read_user(user_id: int, db: Session = Depends(get_db)):
@@ -158,11 +158,11 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 @app.get("/users/{user_id}/favs", response_model=List[schemas.Song], tags=["users"])
-def read_user_favs(user_id: int, db: Session = Depends(get_db)):
+def read_user_favs(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user.songs_faved
+    return db_user.songs_faved[skip:(limit + skip if limit is not None else None)]
 
 @app.post("/songs/", response_model=schemas.Song, tags=["songs"])
 def create_song(
