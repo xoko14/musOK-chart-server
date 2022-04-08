@@ -79,7 +79,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    songs_uploaded: List[Song] = []
+    # songs_uploaded: List[Song] = []
 
     class Config:
         orm_mode = True
