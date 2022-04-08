@@ -42,5 +42,5 @@ ACCESS_TOKEN_EXPIRE_MINUTES = <how long should any auth token be valid in minute
 
 Finally, run:
 ```
-uvicorn main:app --host <db ip>
+uvicorn main:app --host <public ip>
 ```
