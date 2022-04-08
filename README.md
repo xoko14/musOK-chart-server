@@ -3,11 +3,11 @@ Server for uploading and downloading charts.
 
 Needs a PostgreSQL database.
 
-## Installation
+## Usage
 
 ### Ubuntu
 
-Install requirements:
+Install dependency requirements:
 ```
 pip install -r requirements.txt
 ```
