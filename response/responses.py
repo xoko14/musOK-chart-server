@@ -6,7 +6,7 @@ class HTTPException(BaseModel):
 UNAUTORIZED = {
     401: {
         "model": HTTPException,
-        "description": "The user was not autorized to realize this operation."
+        "description": "Authorization failed."
     }
 }
 
@@ -21,5 +21,12 @@ ENTITY_NOT_FOUND = {
     404: {
         "model": HTTPException,
         "description": "Entity with specified id was not found."
+    }
+}
+
+INCORRECT_MEDIA_TYPE = {
+    415: {
+        "model": HTTPException,
+        "description": "Incorrect media type provided."
     }
 }

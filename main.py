@@ -132,7 +132,7 @@ def get_info(db: Session = Depends(get_db)):
         )
     return info
 
-@app.post("/users/", response_model=schemas.User, tags=["users"])
+@app.post("/users/", response_model=schemas.User, response={**responses.USER_ALREADY_REGISTERED}, tags=["users"])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username(db, username=user.username)
     if db_user:
@@ -164,21 +164,21 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-@app.get("/users/{user_id}/uploaded", response_model=List[schemas.Song], tags=["users"])
+@app.get("/users/{user_id}/uploaded", response_model=List[schemas.Song], responses={**responses.ENTITY_NOT_FOUND}, tags=["users"])
 def read_current_user_uploaded(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user.songs_uploaded[skip:(limit + skip if limit is not None else None)]
 
-@app.get("/users/{user_id}/favs", response_model=List[schemas.Song], tags=["users"])
+@app.get("/users/{user_id}/favs", response_model=List[schemas.Song], responses={**responses.ENTITY_NOT_FOUND}, tags=["users"])
 def read_user_favs(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user.songs_faved[skip:(limit + skip if limit is not None else None)]
 
-@app.post("/songs/", response_model=schemas.Song, tags=["songs"])
+@app.post("/songs/", response_model=schemas.Song, responses={**responses.INCORRECT_MEDIA_TYPE}, tags=["songs"])
 def create_song(
     audio: UploadFile,
     art: UploadFile,
@@ -264,49 +264,49 @@ def read_songs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     songs = crud.get_songs(db, skip=skip, limit=limit)
     return songs
 
-@app.get("/songs/{song_id}", response_model=schemas.Song, tags=["songs"])
+@app.get("/songs/{song_id}", response_model=schemas.Song, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song(song_id: str, db: Session = Depends(get_db)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return db_song
 
-@app.get("/songs/{song_id}/jacket", tags=["songs"])
+@app.get("/songs/{song_id}/jacket", responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song_jacket(song_id: str, db: Session = Depends(get_db)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/images/{db_song.song_art[0]}")
 
-@app.get("/songs/{song_id}/audio", tags=["songs"])
+@app.get("/songs/{song_id}/audio", responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song_audio(song_id: str, db: Session = Depends(get_db)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/audio/{db_song.music}")
 
-@app.get("/songs/{song_id}/easy", tags=["songs"])
+@app.get("/songs/{song_id}/easy", responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song_easy(song_id: str, db: Session = Depends(get_db)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/charts/{db_song.easy_diff[1]}")
 
-@app.get("/songs/{song_id}/normal", tags=["songs"])
+@app.get("/songs/{song_id}/normal", responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song_normal(song_id: str, db: Session = Depends(get_db)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/charts/{db_song.normal_diff[1]}")
 
-@app.get("/songs/{song_id}/hard", tags=["songs"])
+@app.get("/songs/{song_id}/hard", responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song_hard(song_id: str, db: Session = Depends(get_db)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/charts/{db_song.hard_diff[1]}")
 
-@app.put("/songs/{song_id}/fav", response_model=schemas.SongStatus, tags=["songs"])
+@app.put("/songs/{song_id}/fav", response_model=schemas.SongStatus, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
@@ -323,7 +323,7 @@ def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.
         ) 
     return fav_status
     
-@app.put("/songs/{song_id}/unfav", response_model=schemas.SongStatus, tags=["songs"])
+@app.put("/songs/{song_id}/unfav", response_model=schemas.SongStatus, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def unfav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
