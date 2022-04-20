@@ -1,5 +1,10 @@
 from models import HTTPException
 
+from pydantic import BaseModel
+
+class HTTPException(BaseModel):
+    detail: str
+
 UNAUTORIZED = {
     401: {
         "model": HTTPException,
