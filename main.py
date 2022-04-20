@@ -108,7 +108,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-@app.post("/token", response_model=schemas.Token, tags=["auth"])
+@app.post("/token", response_model=schemas.Token, responses={**responses.UNAUTORIZED},tags=["auth"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
@@ -145,15 +145,15 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
-@app.get("/users/me", response_model=schemas.User, tags=["users"])
+@app.get("/users/me", response_model=schemas.User, responses={**responses.UNAUTORIZED}, tags=["users"])
 async def read_current_user(current_user: schemas.User = Depends(get_current_user)):
     return current_user
 
-@app.get("/users/me/uploaded", response_model=List[schemas.Song], tags=["users"])
+@app.get("/users/me/uploaded", response_model=List[schemas.Song], responses={**responses.UNAUTORIZED}, tags=["users"])
 def read_current_user_uploaded(skip: int = 0, limit: int = 100, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     return current_user.songs_uploaded[skip:(limit + skip if limit is not None else None)]
 
-@app.get("/users/me/favs", response_model=List[schemas.Song], tags=["users"])
+@app.get("/users/me/favs", response_model=List[schemas.Song], responses={**responses.UNAUTORIZED}, tags=["users"])
 def read_current_user_favs(skip: int = 0, limit: int = 100, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     return current_user.songs_faved[skip:(limit + skip if limit is not None else None)]
 
@@ -178,7 +178,7 @@ def read_user_favs(user_id: int, skip: int = 0, limit: int = 100, db: Session = 
         raise HTTPException(status_code=404, detail="User not found")
     return db_user.songs_faved[skip:(limit + skip if limit is not None else None)]
 
-@app.post("/songs/", response_model=schemas.Song, responses={**responses.INCORRECT_MEDIA_TYPE}, tags=["songs"])
+@app.post("/songs/", response_model=schemas.Song, responses={**responses.INCORRECT_MEDIA_TYPE, **responses.UNAUTORIZED}, tags=["songs"])
 def create_song(
     audio: UploadFile,
     art: UploadFile,
@@ -306,7 +306,7 @@ def get_song_hard(song_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Song not found")
     return FileResponse(f"./storage/charts/{db_song.hard_diff[1]}")
 
-@app.put("/songs/{song_id}/fav", response_model=schemas.SongStatus, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
+@app.put("/songs/{song_id}/fav", response_model=schemas.SongStatus, responses={**responses.ENTITY_NOT_FOUND, **responses.UNAUTORIZED}, tags=["songs"])
 def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
@@ -323,7 +323,7 @@ def fav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.
         ) 
     return fav_status
     
-@app.put("/songs/{song_id}/unfav", response_model=schemas.SongStatus, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
+@app.put("/songs/{song_id}/unfav", response_model=schemas.SongStatus, responses={**responses.ENTITY_NOT_FOUND, **responses.UNAUTORIZED}, tags=["songs"])
 def unfav_song(song_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
