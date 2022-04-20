@@ -1,5 +1,3 @@
-from models import HTTPException
-
 from pydantic import BaseModel
 
 class HTTPException(BaseModel):
