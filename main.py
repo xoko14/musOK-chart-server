@@ -47,6 +47,10 @@ tags_metadata = [
         "name": "songs",
         "description": "Operation with songs.",
     },
+    {
+        "name": "legal",
+        "description": "Legal texts or anything the user needs to aknowledge before creating an account.",
+    },
 ]
 
 app = FastAPI(
@@ -339,3 +343,9 @@ def unfav_song(song_id: str, db: Session = Depends(get_db), current_user: schema
             status = schemas.FavStatus.FAV_ERROR
         ) 
     return fav_status
+
+@app.get("/legal", response_model=schemas.Legal, tags=["legal"])
+def get_legal(db: Session = Depends(get_db)):
+    with open("static/legal.text", "r") as f:
+        text = f.read()
+    return schemas.Legal(text=text)

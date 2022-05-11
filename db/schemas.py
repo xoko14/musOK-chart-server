@@ -121,3 +121,6 @@ class SongStatus(BaseModel):
 
     class Config:
         orm_mode = True
+        
+class Legal(BaseModel):
+    text: str
