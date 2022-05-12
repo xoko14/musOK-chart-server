@@ -153,6 +153,10 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 async def read_current_user(current_user: schemas.User = Depends(get_current_user)):
     return current_user
 
+@app.put("/users/me", response_model=schemas.User, responses={**responses.UNAUTORIZED}, tags=["users"])
+async def update_user_info(user: schemas.UserUpdate, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    crud.update_user(db, user, current_user)
+
 @app.get("/users/me/uploaded", response_model=List[schemas.Song], responses={**responses.UNAUTORIZED}, tags=["users"])
 def read_current_user_uploaded(skip: int = 0, limit: int = 100, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     return current_user.songs_uploaded[skip:(limit + skip if limit is not None else None)]
@@ -343,6 +347,13 @@ def unfav_song(song_id: str, db: Session = Depends(get_db), current_user: schema
             status = schemas.FavStatus.FAV_ERROR
         ) 
     return fav_status
+
+@app.delete("/songs/{song_id}", responses={**responses.ENTITY_NOT_FOUND, **responses.UNAUTORIZED}, tags=["songs"])
+def delete_song(song_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    db_song: models.Song = crud.get_song(db, song_id)
+    if db_song.uploader is not current_user.id:
+        raise HTTPException(status_code=401, detail="User did not upload this song")
+    crud.delete_song(db, song_id)
 
 @app.get("/legal", response_model=schemas.Legal, tags=["legal"])
 def get_legal(db: Session = Depends(get_db)):

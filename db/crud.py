@@ -1,4 +1,5 @@
 from distutils.command.upload import upload
+from pyexpat import model
 from sqlalchemy.orm import Session
 
 from typing import Optional
@@ -24,6 +25,12 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit() 
     db.refresh(db_user)
     return db_user
+
+def update_user(db: Session, user: schemas.UserUpdate, current_user: models.User):
+    db_user: models.User = get_user(db, current_user.id)
+    db_user.username = (db_user.username, user.username)[user.username is None]
+    db_user.hashed_password = (db_user.hashed_password, user.password)[user.password is None]
+    db.commit()
 
 def get_song(db: Session, song_id: int):
     return db.query(models.Song).filter(models.Song.id == song_id).first()
@@ -80,3 +87,7 @@ def unfav_song(db: Session, user_id: int, song_id: int):
     except:
         return False
     return True
+
+def delete_song(db: Session, song_id: int):
+    db.delete(get_song(db, song_id))
+    db.commit()

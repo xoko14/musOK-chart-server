@@ -67,7 +67,7 @@ class Song(SongBase):
     
     class Config:
         orm_mode = True
-
+        
 
 class UserBase(BaseModel):
     username: str
@@ -75,6 +75,10 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    
+class UserUpdate(BaseModel):
+    username: Optional[str]
+    password: Optional[str]
 
 
 class User(UserBase):
