@@ -28,8 +28,8 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def update_user(db: Session, user: schemas.UserUpdate, current_user: models.User):
     db_user: models.User = get_user(db, current_user.id)
-    db_user.username = (db_user.username, user.username)[user.username is None]
-    db_user.hashed_password = (db_user.hashed_password, user.password)[user.password is None]
+    db_user.username = user.username if user.username is not None else db_user.username
+    db_user.hashed_password = user.password if user.password is not None else db_user.hashed_password
     db.commit()
 
 def get_song(db: Session, song_id: int):
