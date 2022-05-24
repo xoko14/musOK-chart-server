@@ -199,12 +199,12 @@ def create_song(
     current_user: schemas.User = Depends(get_current_user)
     ):
 
-    # if audio.content_type != "audio/wav":
-    #     raise HTTPException(status_code=415, detail="Media type must be audio/wav")
-    # if art.content_type != "image/png":
-    #     raise HTTPException(status_code=415, detail="Media type must be image/png")
-    # if song_info.content_type != "text/xml":
-    #     raise HTTPException(status_code=415, detail="Media type must be text/xml")
+    if audio.content_type != "audio/wav":
+        raise HTTPException(status_code=415, detail="Media type must be audio/wav")
+    if art.content_type != "image/png":
+        raise HTTPException(status_code=415, detail="Media type must be image/png")
+    if song_info.content_type != "text/xml":
+        raise HTTPException(status_code=415, detail="Media type must be text/xml")
 
     xml = song_info.file.read()
     root: ET.Element = ET.fromstring(xml)
