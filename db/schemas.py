@@ -64,7 +64,7 @@ class SongCreateAPI(BaseModel):
 
 class Song(SongBase):
     id: int
-    isFaved: bool
+    isFaved: bool = False
     
     class Config:
         orm_mode = True
