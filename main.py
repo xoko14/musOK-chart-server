@@ -300,7 +300,7 @@ def read_songs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), u
 @app.get("/songs/{song_id}", response_model=schemas.Song, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
 def get_song(song_id: str, db: Session = Depends(get_db), user: schemas.User = Depends(get_current_user_optional)):
     if user:
-        db_song = crud.get_song(db=db, song_id=song_id, user=user)
+        db_song = crud.get_song_auth(db=db, song_id=song_id, user=user)
     else:
         db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
