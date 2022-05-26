@@ -42,7 +42,7 @@ def get_songs(db: Session, skip: int = 0, limit: int = 100):
 def get_song_auth(db: Session, song_id: int, user: schemas.User):
     song: models.Song = db.query(models.Song).filter(models.Song.id == song_id).first()
     song_schema = schemas.Song(
-        song_id=int(song.id),
+        id=song.id,
         song_name=song.song_name,
         author=song.author,
         music=song.music,
