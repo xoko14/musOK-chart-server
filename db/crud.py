@@ -70,7 +70,7 @@ def get_songs_auth(db: Session, user: schemas.User, skip: int = 0, limit: int = 
             song_art=song.song_art,
             uploader=song.uploader
         )
-        song_schema.isFaved = True if db.execute(f"select * from favs where user_id = {user.id} and song_id = {song.id}").first() else False
+        song_schema.isFaved = True if db.query(models.User).filter([song_ls.id == song.id for song_ls in models.User.songs_faved]) else False
         songs_s.append(song_schema)
     return songs_s
 
