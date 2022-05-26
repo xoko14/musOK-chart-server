@@ -52,7 +52,7 @@ def get_song_auth(db: Session, song_id: int, user: schemas.User):
         song_art=song.song_art,
         uploader=song.uploader
     )
-    song_schema.isFaved = True if db.execute(f"select * from favs where user_id = {user.id} and song_id = {song_id}") else False
+    song_schema.isFaved = True if db.execute(f"select * from favs where user_id = {user.id} and song_id = {song_id}").first else False
     return song_schema
 
 def get_songs_auth(db: Session, user: schemas.User, skip: int = 0, limit: int = 100):
@@ -60,7 +60,7 @@ def get_songs_auth(db: Session, user: schemas.User, skip: int = 0, limit: int = 
     songs_s = []
     for song in songs:
         song_schema = schemas.Song(
-            song_id=song.id,
+            id=song.id,
             song_name=song.song_name,
             author=song.author,
             music=song.music,
