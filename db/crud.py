@@ -1,4 +1,5 @@
 from distutils.command.upload import upload
+from fcntl import F_SEAL_SEAL
 from pyexpat import model
 from sqlalchemy.orm import Session
 
@@ -37,6 +38,40 @@ def get_song(db: Session, song_id: int):
 
 def get_songs(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Song).offset(skip).limit(limit).all()
+
+def get_song_auth(db: Session, song_id: int, user: schemas.User):
+    song: models.Song = db.query(models.Song).filter(models.Song.id == song_id).first()
+    song_schema = schemas.Song(
+        song_name=song.song_name,
+        author=song.author,
+        music=song.music,
+        easy_diff=song.easy_diff,
+        normal_diff=song.normal_diff,
+        hard_diff=song.hard_diff,
+        song_art=song.song_art,
+        uploader=song.uploader
+    )
+    song_schema.isFaved = True if db.execute(f"select * from favs where user_id = {user.id} and song_id = {song_id}") else False
+    return song_schema
+
+def get_songs_auth(db: Session, user: schemas.User, skip: int = 0, limit: int = 100):
+    songs = db.query(models.Song).offset(skip).limit(limit).all()
+    songs_s = []
+    for song in songs:
+        song_schema = schemas.Song(
+            song_name=song.song_name,
+            author=song.author,
+            music=song.music,
+            easy_diff=song.easy_diff,
+            normal_diff=song.normal_diff,
+            hard_diff=song.hard_diff,
+            song_art=song.song_art,
+            uploader=song.uploader
+        )
+        song_schema.isFaved = True if db.execute(f"select * from favs where user_id = {user.id} and song_id = {song.id}") else False
+        songs_s.append(song_schema)
+    return songs_s
+
 
 def create_song(db: Session, song: schemas.SongCreateAPI, audio: str, art: str, easy: Optional[str] = None, normal: Optional[str]= None, hard: Optional[str] = None):
     db_song = models.Song(

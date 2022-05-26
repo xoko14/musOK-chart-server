@@ -112,6 +112,25 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
+async def get_current_user_optional(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            return None
+        token_data = schemas.TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+    user = crud.get_user_by_username(db, username=token_data.username)
+    if user is None:
+        raise credentials_exception
+    return user
+
 @app.post("/token", response_model=schemas.Token, responses={**responses.UNAUTORIZED},tags=["auth"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
@@ -199,12 +218,12 @@ def create_song(
     current_user: schemas.User = Depends(get_current_user)
     ):
 
-    # if audio.content_type != "audio/wav":
-    #     raise HTTPException(status_code=415, detail="Media type must be audio/wav")
-    # if art.content_type != "image/png":
-    #     raise HTTPException(status_code=415, detail="Media type must be image/png")
-    # if song_info.content_type != "text/xml":
-    #     raise HTTPException(status_code=415, detail="Media type must be text/xml")
+    if audio.content_type != "audio/wav":
+        raise HTTPException(status_code=415, detail="Media type must be audio/wav")
+    if art.content_type != "image/png":
+        raise HTTPException(status_code=415, detail="Media type must be image/png")
+    if song_info.content_type != "text/xml":
+        raise HTTPException(status_code=415, detail="Media type must be text/xml")
 
     xml = song_info.file.read()
     root: ET.Element = ET.fromstring(xml)
@@ -268,13 +287,19 @@ def create_song(
     return crud.create_song(db, song, file_audio, file_art, file_easy, file_normal, file_hard)
     
 @app.get("/songs/", response_model=List[schemas.Song], tags=["songs"])
-def read_songs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    songs = crud.get_songs(db, skip=skip, limit=limit)
+def read_songs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), user: schemas.User = Depends(get_current_user_optional)):
+    if user:
+        songs = crud.get_songs_auth(db, user, skip=skip, limit=limit)
+    else:  
+        songs = crud.get_songs(db, skip=skip, limit=limit)
     return songs
 
 @app.get("/songs/{song_id}", response_model=schemas.Song, responses={**responses.ENTITY_NOT_FOUND}, tags=["songs"])
-def get_song(song_id: str, db: Session = Depends(get_db)):
-    db_song = crud.get_song(db=db, song_id=song_id)
+def get_song(song_id: str, db: Session = Depends(get_db), user: schemas.User = Depends(get_current_user_optional)):
+    if user:
+        db_song = crud.get_song(db=db, song_id=song_id, user=user)
+    else:
+        db_song = crud.get_song(db=db, song_id=song_id)
     if db_song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return db_song
