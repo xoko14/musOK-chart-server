@@ -1,6 +1,6 @@
 from typing import Optional, Type, List
 from fastapi import Form
-from pydantic import BaseModel
+from pydantic import BaseModel, NoneBytes
 from enum import Enum
 import inspect
 
@@ -64,7 +64,7 @@ class SongCreateAPI(BaseModel):
 
 class Song(SongBase):
     id: int
-    isFaved: bool = False
+    isFaved: bool = None
     
     class Config:
         orm_mode = True
