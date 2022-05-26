@@ -52,7 +52,7 @@ def get_song_auth(db: Session, song_id: int, user: schemas.User):
         song_art=song.song_art,
         uploader=song.uploader
     )
-    song_schema.isFaved = True if db.query(models.User).filter([song_ls.id == song.id for song_ls in models.User.songs_faved]) else False
+    song_schema.isFaved = True if db.query(models.User).filter(models.User.id == user.id, [song_ls.id == song.id for song_ls in models.User.songs_faved]) else False
     return song_schema
 
 def get_songs_auth(db: Session, user: schemas.User, skip: int = 0, limit: int = 100):
@@ -70,7 +70,7 @@ def get_songs_auth(db: Session, user: schemas.User, skip: int = 0, limit: int = 
             song_art=song.song_art,
             uploader=song.uploader
         )
-        song_schema.isFaved = True if db.query(models.User).filter([song_ls.id == song.id for song_ls in models.User.songs_faved]) else False
+        song_schema.isFaved = True if db.query(models.User).filter(models.User.id == user.id, [song_ls.id == song.id for song_ls in models.User.songs_faved]) else False
         songs_s.append(song_schema)
     return songs_s
 
