@@ -125,10 +125,8 @@ async def get_current_user_optional(token: str = Depends(oauth2_scheme), db: Ses
             return None
         token_data = schemas.TokenData(username=username)
     except JWTError:
-        raise credentials_exception
+        return None
     user = crud.get_user_by_username(db, username=token_data.username)
-    if user is None:
-        raise credentials_exception
     return user
 
 @app.post("/token", response_model=schemas.Token, responses={**responses.UNAUTORIZED},tags=["auth"])
