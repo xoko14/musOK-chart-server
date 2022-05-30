@@ -33,6 +33,11 @@ def update_user(db: Session, user: schemas.UserUpdate, current_user: models.User
     db_user.hashed_password = user.password if user.password is not None else db_user.hashed_password
     db.commit()
 
+def delete_user(db: Session, user_id: int):
+    db_user = get_user(db, user_id)
+    db.delete(db_user)
+    db.commit()
+
 def get_song(db: Session, song_id: int):
     return db.query(models.Song).filter(models.Song.id == song_id).first()
 

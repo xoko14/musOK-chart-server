@@ -187,6 +187,11 @@ def read_current_user_uploaded(skip: int = 0, limit: int = 100, current_user: sc
 def read_current_user_favs(skip: int = 0, limit: int = 100, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     return current_user.songs_faved[skip:(limit + skip if limit is not None else None)]
 
+@app.delete("/users/me", responses={**responses.UNAUTORIZED}, tags=["users"])
+def delete_current_user(current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    crud.delete_user(db, current_user.id)
+    return
+
 @app.get("/users/{user_id}", response_model=schemas.User, responses={**responses.ENTITY_NOT_FOUND}, tags=["users"])
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
