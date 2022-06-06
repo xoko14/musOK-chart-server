@@ -1,7 +1,7 @@
 # musOK-chart-server
 Server for uploading and downloading charts.
 
-Needs a PostgreSQL database.
+Needs a PostgreSQL database although it could be used with any database if SQLAlchemy's configuration is changed accordingly.
 
 ## Usage
 
