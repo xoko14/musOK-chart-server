@@ -134,6 +134,10 @@ async def get_current_user_optional(token: str = Depends(oauth2_scheme_optional)
         raise credentials_exception
     return user
 
+@app.get("/")
+async def docs_redirect():
+    return RedirectResponse(url='/docs')
+
 @app.post("/token", response_model=schemas.Token, responses={**responses.UNAUTORIZED},tags=["auth"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
